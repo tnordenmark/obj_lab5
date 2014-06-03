@@ -224,9 +224,9 @@ int HousingQ::indexOf(const string &persnr, QList &q) const
 }
 
 //------------------------------------------------------------------------------
-// indexOf
+// sizeOfQue
 //------------------------------------------------------------------------------
-// Uppgift: Iterera över kön och räkna antalet noder
+// Uppgift: Itererar över kön och räknar antalet noder
 // Indata : &q (QList)
 // Utdata : size (int)
 //------------------------------------------------------------------------------
@@ -346,6 +346,7 @@ void HousingQ::delPerson(QList &q)
                  << " raderades ur listan." << endl;
             cout << endl;
         }
+        // Annars felmeddelande
         else
         {
             cout << endl;
@@ -364,13 +365,18 @@ void HousingQ::delPerson(QList &q)
 //------------------------------------------------------------------------------
 void HousingQ::saveToFile(QList &q)
 {
+    // Skapa utfils-objekt
     fstream outFile("housingq.txt", ios::out);
 
+    // Om det gick bra att öppna filen
     if(outFile.is_open())
     {
+        // Skapa iterator för loopen
         QIterator qi;
+        // Räknare för position i kön
         int quePos = 1;
 
+        // Iterera över listan och skriv ut samtliga poster till utfilen
         for(qi = q.begin(); qi != q.end(); qi++)
         {
             outFile << "Plats i kön: " << quePos << endl;
@@ -381,8 +387,10 @@ void HousingQ::saveToFile(QList &q)
             outFile << "Persnr: " << (*qi).getPersNr() << endl;
             outFile << "Skonr: " << (*qi).getSkoNr() << endl;
             outFile << endl;
+            // Uppdatera positionsräknare
             quePos++;
         }
+        // Ledtext är kul
         cout << endl;
         cout << "Listan skrevs till fil." << endl;
         cout << endl;

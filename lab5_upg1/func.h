@@ -3,6 +3,5 @@
 #include "person.h"
 
 void invalidChoice();
-void printPers(Person const &p);
 
 #endif // FUNC_H

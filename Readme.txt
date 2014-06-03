@@ -1,32 +1,26 @@
-Jag har totalt kört fast i pekarträsket och skickar in ett ofärdigt program så jag kan få lite
-feedback och tips. Känner att jag måste få verifierat om jag är på rätt spår eller om programmet
-är helt galet från början till slut. Det mesta fungerar utom funktionen för att radera en given
-person.
+Först måste jag säga att jag hade förträngt att jag hade en lab kvar i kursen. Dock har
+jag fått ordning på programmet vad jag kan se. Har skrivit om housingq.cpp och flyttat
+alla funktioner med output från queue.cpp till housingq.cpp. Programmet segfaultar inte
+längre om man försöker ta bort en användare som inte finns eller användare på specifika
+platser i kön (först, sist etc).
 
-De problem och funderingar jag har följer nedan:
+Har även skrivit nya funktioner för indexOf() och sizeOfQue() i housingq.cpp den här
+gången, samt städat upp koden och tagit bort en del andra funktioner. Loopar använder nu
+QIterator för att iterera över listan och alla 0/NULL är ersatta med nullptr.
 
-housingq.cpp - void HousingQ::delPerson(QList &q)
-=================================================
+Dock har jag en reservation. Är inte helt säker på vad som menas angående att data ska 
+returneras som en referensparameter i beskrivningen av deque-funktionen nedan. Ej heller
+hur den ska skrivas. Är det meningen att man ska använda templates eller överlagring av
+funktioner för att kunna returnera olika datatyper?
 
-I den här funktionen kommer jag inte på något bra sätt att "koppla" ett objekt av typen Person
-till datan i noden som returneras av sökfunktionen. QList::del(Item item) ska ju ha ett Item,
-alltså ett objekt av typen Person. Har funderat lite på att försöka skriva en annan sökfunktion
-som istället returnerar ett Item (alltså ett objekt av typen Person). Alternativt ändra del() så
-att den tar en pekare till en nod som indata istället.
+Namn: deque
+Uppgift: Tar bort en nod i början av listan. Data för den person som ligger i noden
+returneras via en referensdeklarerad parameter. Vidare returneras false om listan är tom
+annars true
+Indata: -
+Utdata: false om listan är tom annars true. Item &item, data för den person som tas bort
+från listan.
 
+I övrigt verkar programmet fungera som det ska utan buggar.
 
-queue.cpp - Item &QIterator::operator*() const
-==============================================
-
-Är inte säker på om det är så enkelt som return node->data, misstänker att denna kommer till
-användning i QList::del() för att radera en given person.
-
-queue.cpp - QIterator &QIterator::operator++() och QIterator QIterator::operator++(int)
-=======================================================================================
-
-Samma sak här, är inte alls säker på hur dessa ska fungera.
-
-queue.cpp - bool QIterator::operator!=(const QIterator &qi) const
-=================================================================
-
-Denna känns någorlunda rätt, men inte heller här är jag säker alls
+Thomas Nordenmark
