@@ -1,0 +1,35 @@
+Plats i kön: 1
+Namn: Arne Andersson
+Gatuadress: Storgatan 4
+Postadress: 83146 Östersund
+Persnr: 810512-8417
+Skonr: 44
+
+Plats i kön: 2
+Namn: Caesar Caligula
+Gatuadress: Kejsargatan 10
+Postadress: 55567 Rom
+Persnr: 141212-8415
+Skonr: 36
+
+Plats i kön: 3
+Namn: Daniel Dragan
+Gatuadress: Storgatan 10
+Postadress: 83146 Östersund
+Persnr: 651012-8245
+Skonr: 39
+
+Plats i kön: 4
+Namn: Beata Bertilsson
+Gatuadress: Esplanaden 5
+Postadress: 83132 Östersund
+Persnr: 610721-8216
+Skonr: 38
+
+Plats i kön: 5
+Namn: Bo Caligula
+Gatuadress: Torget 10
+Postadress: 531 42 Landvetter
+Persnr: 710101-8216
+Skonr: 38
+

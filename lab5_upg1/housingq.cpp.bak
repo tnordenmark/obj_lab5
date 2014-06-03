@@ -1,0 +1,370 @@
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <fstream>
+#include "housingq.h"
+#include "func.h"
+#include "queue.h"
+using namespace std;
+
+//------------------------------------------------------------------------------
+// showMenu
+//------------------------------------------------------------------------------
+// Uppgift: Visar en huvudmeny
+// Indata :
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::showMenu()
+{
+    cout << "=========================" << endl;
+    cout << "        Huvudmeny" << endl;
+    cout << "1. Ställ person i kö" << endl;
+    cout << "2. Erbjud person bostad" << endl;
+    cout << "3. Skriv ut kö" << endl;
+    cout << "4. Skriv ut person" << endl;
+    cout << "5. Ta bort person ur kö" << endl;
+    cout << "6. Spara kö på fil" << endl;
+    cout << "7. Avsluta" << endl;
+    cout << "=========================" << endl;
+}
+
+//------------------------------------------------------------------------------
+// menuChoice
+//------------------------------------------------------------------------------
+// Uppgift: Hanterar menyval för en huvudmeny
+// Indata :
+// Utdata : menuChoice returneras som en integer
+//------------------------------------------------------------------------------
+int HousingQ::menuChoice()
+{
+    // Lagra menyvalet
+    int menuChoice;
+
+    // Fråga efter och läs in menyvalet med teckenverifiering
+    while ((cout << "Menyval: ")
+             && (!(cin >> menuChoice)
+             || menuChoice < 1
+             || menuChoice > 7))
+    {
+        invalidChoice();
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    // Returnera menyvalet som en integer
+    return menuChoice;
+}
+
+//------------------------------------------------------------------------------
+// addPersonToQue
+//------------------------------------------------------------------------------
+// Uppgift: Lägger till person i bostadskön
+// Indata : &q (QList)
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::addPersonToQue(QList &q)
+{
+    // Skapa de objekt som behövs
+    Person p;
+    Name n;
+    Address a;
+
+    // Variabler för inmatad data
+    string fname, lname, street, postalno, city, persnr, skonrstr;
+
+    // Läs bort huvudmenyns newline
+    cin.get();
+
+    // Fråga efter, mata in och tilldela data till rätt objekts attribut
+    cout << "Förnamn: ";
+    getline(cin, fname);
+    n.setFirstName(fname);
+
+    cout << "Efternamn: ";
+    getline(cin, lname);
+    n.setLastName(lname);
+
+    cout << "Gatuadress: ";
+    getline(cin, street);
+    a.setStreet(street);
+
+    cout << "Postnr: ";
+    getline(cin, postalno);
+    a.setPostalNo(postalno);
+
+    cout << "Stad: ";
+    getline(cin, city);
+    a.setCity(city);
+
+    // Sätt Person-objektets "vanliga" variabler persNr och skoNr till rätt inmatad data
+    cout << "Personnr: ";
+    getline(cin, persnr);
+    p.setPersNr(persnr);
+
+    // Eftersom det är lite vanskligt att blanda cin >> och getline använder jag
+    // getline till en temporär skonrsträng och omvandlar sen till int innan den
+    // sparas i Person-objektet
+    cout << "Skonr: ";
+    getline(cin, skonrstr);
+    int skonr = 0;
+    stringstream skostream(skonrstr);
+    skostream >> skonr;
+    p.setSkoNr(skonr);
+
+    // Tilldela objekten Name och Address i klassen Person sina objekt
+    p.setName(n);
+    p.setAddress(a);
+
+    // Lägg hela personobjektet i kölistan
+    q.enque(p);
+}
+
+//------------------------------------------------------------------------------
+// offerHousing
+//------------------------------------------------------------------------------
+// Uppgift: Erbjuder bostad (tar bort första person ur kön) och skriver ut
+//          information om aktuell person
+// Indata : &q (QList)
+// Utdata : Raderar person på köplats 1 samt skriver information
+//------------------------------------------------------------------------------
+void HousingQ::offerHousing(QList &q)
+{
+    Person p;
+
+    // Om det går bra att ta bort personen först i kön
+    if(q.deque(p))
+    {
+        // Skriv ut information om personen
+        cout << "Följande person har erbjudits bostad: " << endl;
+        q.printPerson(p);
+        // Uppdatera räknaren för antal personer
+        nrpers--;
+    }
+    else
+        cout << "Kön är tom." << endl;
+}
+
+//------------------------------------------------------------------------------
+// printHousingQue
+//------------------------------------------------------------------------------
+// Uppgift: Skriver ut kölistan
+// Indata : &q (QList)
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::printHousingQue(QList &q)
+{
+    // Om kön är tom
+    if(q.isEmpty())
+        cout << "Kön är tom." << endl;
+    // Annars skriv ut listan
+    else
+        q.printList();
+}
+
+//------------------------------------------------------------------------------
+// printPerson
+//------------------------------------------------------------------------------
+// Uppgift: Skriver ut angiven person i listan
+// Indata : &q (QList)
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::printPerson(QList &q)
+{
+    // Sträng för att lagra personnr
+    string persnr;
+
+    // Läs bort huvudmenyns newline
+    cin.get();
+
+    // Skriv meddelande om kön är tom
+    if(q.isEmpty())
+        cout << "Kön är tom." << endl;
+    else
+    {
+        // Fråga efter personnr att skriva ut
+        cout << "Mata in persnr att söka efter: ";
+        getline(cin, persnr);
+
+        // Skapa en node med adressen till det eftersöka objektet om det hittades
+        Node *p = q.searchNode(persnr);
+
+        // Om p innehåller en adress till ett objekt (alltså inte är tom)
+        if(p != 0)
+        {
+            // Skriv ut personens köplats
+            cout << endl << "Plats i kön: " << q.indexOf(persnr) << endl;
+            // Skriv ut personens information
+            q.printNode(p);
+        }
+        else
+            cout << "Personen med persnr \"" << persnr << "\" finns inte i kön." << endl;
+    }
+}
+
+//------------------------------------------------------------------------------
+// delPerson
+//------------------------------------------------------------------------------
+// Uppgift: Raderar angiven person i listan
+// Indata : &q (QList)
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::delPerson(QList &q)
+{
+    // Sträng för att lagra personnr
+    string persnr;
+
+    // Läs bort huvudmenyns newline
+    cin.get();
+
+    // Skriv meddelande om kön är tom
+    if(q.isEmpty())
+        cout << "Kön är tom." << endl;
+    else
+    {
+        // Fråga efter personnr att radera
+        cout << "Mata in persnr för person att radera: ";
+        getline(cin, persnr);
+
+        // Skapa ett iterator-objekt
+        QIterator qi;
+
+        // Iterera igenom listan
+        for(qi = q.begin(); qi != q.end(); qi++)
+        {
+            if((*qi).getPersNr() == persnr)
+            {
+                // Avbryt loopen om qi står på rätt nod
+                break;
+            }
+        }
+        // Skicka med den derefererade noden, alltså objektet av typen Item, till
+        // delete-funktionen och testa om delete-operationen slutfördes korrekt
+        if(q.del(*qi))
+            cout << (*qi).getName().getFirstName() << " " << (*qi).getName().getLastName()
+                 << " raderades ur listan." << endl;
+        else
+            cout << "Personen med persnr " << persnr << " kunde inte raderas." << endl;
+    }
+}
+
+//------------------------------------------------------------------------------
+// saveToFile
+//------------------------------------------------------------------------------
+// Uppgift: Sparar listan på fil
+// Indata : &q (QList)
+// Utdata :
+//------------------------------------------------------------------------------
+void HousingQ::saveToFile(QList &q)
+{
+    fstream outFile("housingq.txt", ios::out);
+
+    if(outFile.is_open())
+    {
+        int quePos = 1;
+
+        for(q.)
+
+//        for(Node *p = first; p; p = p->next)
+//        {
+//            outFile << "Plats i kön: " << quePos << endl;
+//            outFile << "Namn: " << p->data.getName().getFirstName() << " " << p->data.getName().getLastName() << endl;
+//            outFile << "Gatuadress: " << p->data.getAddress().getStreet() << endl;
+//            outFile << "Postadress: " << p->data.getAddress().getPostalNo() << " "
+//                    << p->data.getAddress().getCity() << endl;
+//            outFile << "Persnr: " << p->data.getPersNr() << endl;
+//            outFile << "Skonr: " << p->data.getSkoNr() << endl;
+//            outFile << endl;
+//            quePos++;
+//        }
+    }
+    else
+        // I/O error, om filen inte kunde öppnas
+        cout << "Kunde inte öppna filen." << endl;
+
+    // Stäng utfilen
+    outFile.close();
+}
+
+// Standardkonstruktor
+HousingQ::HousingQ()
+{
+    nrpers = 0;
+    filename = "";
+}
+
+// Huvudfunktion som kör programmet
+int HousingQ::run()
+{
+    // Skapa kö-objekt
+    QList que;
+
+    // Skapa testpersoner
+    Person p1(Name("Arne", "Andersson"), Address("Storgatan 4", "83146", "Östersund"), "810512-8417", 44);
+    Person p2(Name("Caesar", "Caligula"), Address("Kejsargatan 10", "55567", "Rom"), "141212-8415", 36);
+    Person p3(Name("Daniel", "Dragan"), Address("Storgatan 10", "83146", "Östersund"), "651012-8245", 39);
+    Person p4(Name("Beata", "Bertilsson"), Address("Esplanaden 5", "83132", "Östersund"), "610721-8216", 38);
+    Person p5(Name("Bo", "Caligula"), Address("Torget 10", "531 42", "Landvetter"), "710101-8216", 38);
+
+    // Lägg till testpersoner i kö
+    que.enque(p1);
+    nrpers++;
+    que.enque(p2);
+    nrpers++;
+    que.enque(p3);
+    nrpers++;
+    que.enque(p4);
+    nrpers++;
+    que.enque(p5);
+    nrpers++;
+
+    // Lagra menyvalet
+    int menu_choice;
+
+    do
+    {
+        // Visa huvudmenyn
+        showMenu();
+        // Hämta menyvalet
+        menu_choice = menuChoice();
+
+        // Hantera huvudmenyns olika val
+        switch(menu_choice)
+        {
+            case 1:
+                // Lägg till person
+                addPersonToQue(que);
+                break;
+            case 2:
+                // Erbjud bostad till person först i kön och radera
+                // densamme
+                offerHousing(que);
+                break;
+            case 3:
+                // Skriv ut kön
+                printHousingQue(que);
+                break;
+            case 4:
+                // Skriv ut given person
+                printPerson(que);
+                break;
+            case 5:
+                // Radera given person
+                delPerson(que);
+                break;
+            case 6:
+                // Spara kön till fil
+                saveToFile(que);
+                break;
+            case 7:
+                // Avsluta program
+                cout << "Avslutar program..." << endl;
+                return 0;
+            default:
+                // Bör inte hända, skriver felmeddelande
+                invalidChoice();
+        }
+        // Upprepa så länge menyvalet inte är 3
+    }while(menu_choice != 7);
+
+    return 0;
+}

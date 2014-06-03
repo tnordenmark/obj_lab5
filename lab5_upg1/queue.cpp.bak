@@ -1,0 +1,297 @@
+// Defintionsfil
+// Filnamn: queue.cpp
+//---------------------------------------------------------------------------
+// Nodeklassen placeras i cpp-filen för att den ska bli åtkomlig ENBART för
+// klasserna QList och QIterator. På detta sätt kan datamedlemmarna göras
+// public.
+#include <iostream>
+#include <fstream>
+#include "queue.h"
+#include "func.h"
+using namespace std;
+
+class Node
+{
+    public:
+        Node *next;
+        Item data;
+        Node (Node *n, Item newData) : next(n), data(newData) {}
+};
+// Fyll på med funktionsdefinitioner för medlemsfunktionerna i QIterator och
+// QList nedan!
+
+// Standardkonstruktor
+QIterator::QIterator()
+{
+    node = nullptr;
+}
+
+// Överlagrad konstruktor
+QIterator::QIterator(Node *n)
+{
+    node = n;
+}
+
+// Överlagrad * operator (dereferens)
+Item &QIterator::operator*() const
+{
+    return node->data;
+}
+
+// Överlagrad ++(prefix) operator
+QIterator &QIterator::operator++()
+{
+    node = node->next;
+
+    return *this;
+}
+
+// Överlagrad ++(suffix) operator
+QIterator QIterator::operator++(int)
+{
+    QIterator temp = *this;
+    ++(*this);
+
+    return temp;
+}
+
+// Överlagrad != operator
+bool QIterator::operator!=(const QIterator &qi) const
+{
+    return (node != qi.node);
+}
+
+// Destruktor
+QList::~QList()
+{
+    while(!isEmpty())
+    {
+        Node *tmp = first;
+        first = first->next;
+        delete tmp;
+    }
+}
+
+// Lägg till en ny node sist i kön
+void QList::enque(Item item)
+{
+    Node *pNew = new Node(0, item);
+
+    if(isEmpty())
+        first = pNew;
+    else
+        last->next = pNew;
+    last = pNew;
+
+    size++;
+}
+
+// Radera första noden i kön
+bool QList::deque(Item &item)
+{
+    if(isEmpty())
+        return false;
+
+    Node *n = first;
+    item = n->data;
+    first = first->next;
+
+    if(isEmpty())
+        last = 0;
+
+    delete n;
+    size--;
+
+    return true;
+}
+
+// Radera en specifik node
+bool QList::del(Item item)
+{
+    if(isEmpty())
+        return false;
+
+    Node *curr, *prev;
+
+    prev = nullptr;
+
+    for(curr = first; curr != nullptr; prev = curr, curr = curr->next)
+    {
+        if(curr->data.getPersNr() == item.getPersNr())
+        {
+            if(prev == nullptr)
+                first = curr->next;
+            else
+                prev = curr->next;
+
+            delete curr;
+            return true;
+        }
+    }
+
+    return false;
+}
+//    // Om listan är tom
+//    if(isEmpty())
+//    {
+//        return false;
+//    }
+//    else
+//    {
+//        Node *curr = first;
+//        Node *prev = nullptr;
+
+//        // Gå igenom listan för att sätta curr till rätt nod
+//        while(curr != nullptr)
+//        {
+//            if(curr->data.getPersNr() == item.getPersNr())
+//                // Om hittad, breaka ut ur loopen
+//                break;
+//            // Annars fortsätt testa nästa nod
+//            else
+//            {
+//                // Sätt föregående node till nuvarande
+//                prev = curr;
+//                // Och nuvarande nod till nuvarandes nästa nod
+//                curr = curr->next;
+//            }
+//        }
+
+//        // Om hela listan har gåtts igenom utan träff
+//        if(curr == nullptr)
+//            return false;
+//        else
+//        {
+//            // Om personen finns på första platsen i listan
+//            if(curr == first)
+//                first = first->next;
+//            else if(curr->next = nullptr)
+//            {
+//                delete curr;
+//                curr = nullptr;
+//            }
+//            // Om personen finns på plats 2 eller framåt
+//            else
+//                prev->next = curr->next;
+
+//            // Ta bort noden
+//            delete curr;
+//            //  Minska storleken
+//            size--;
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+// Är listan tom? D.v.s. är första noden NULL?
+bool QList::isEmpty() const
+{
+    return first == 0;
+}
+
+// Skriv ut hela listan
+void QList::printList() const
+{
+    int quePos = 1;
+
+    for(Node *p = first; p; p = p->next)
+    {
+        cout << "Plats i kön: " << quePos << endl;
+        cout << "Namn: " << p->data.getName().getFirstName() << " " << p->data.getName().getLastName() << endl;
+        cout << "Gatuadress: " << p->data.getAddress().getStreet() << endl;
+        cout << "Postadress: " << p->data.getAddress().getPostalNo() << " " << p->data.getAddress().getCity() << endl;
+        cout << "Persnr: " << p->data.getPersNr() << endl;
+        cout << "Skonr: " << p->data.getSkoNr() << endl;
+        cout << endl;
+        quePos++;
+    }
+}
+
+// Skriv kö till fil
+void QList::writeToFile()
+{
+    // Öppna filen för skrivning
+    fstream outFile("housingq.txt", ios::out);
+
+    // Om det gick bra att öppna filen
+    if(outFile.is_open())
+    {
+        // Skriv listans innehåll till fil
+        int quePos = 1;
+
+        for(Node *p = first; p; p = p->next)
+        {
+            outFile << "Plats i kön: " << quePos << endl;
+            outFile << "Namn: " << p->data.getName().getFirstName() << " " << p->data.getName().getLastName() << endl;
+            outFile << "Gatuadress: " << p->data.getAddress().getStreet() << endl;
+            outFile << "Postadress: " << p->data.getAddress().getPostalNo() << " "
+                    << p->data.getAddress().getCity() << endl;
+            outFile << "Persnr: " << p->data.getPersNr() << endl;
+            outFile << "Skonr: " << p->data.getSkoNr() << endl;
+            outFile << endl;
+            quePos++;
+        }
+    }
+    else
+        // I/O error, om filen inte kunde öppnas
+        cout << "Kunde inte öppna filen." << endl;
+
+    // Stäng utfilen
+    outFile.close();
+}
+
+// Skriver ut ett personobjekt
+void QList::printPerson(Item &item) const
+{
+    cout << "Namn: " << item.getName().getFirstName() << " " << item.getName().getLastName() << endl;
+    cout << "Gatuadress: " << item.getAddress().getStreet() << endl;
+    cout << "Postadress: " << item.getAddress().getPostalNo() << " " << item.getAddress().getCity() << endl;
+    cout << "Personnr: " << item.getPersNr() << endl;
+    cout << "Skostorlek: " << item.getSkoNr() << endl;
+}
+
+// Sökfunktion som returnerar en pekare till objektet som eftersöks
+Node *QList::searchNode(string searchItem) const
+{
+    Node *p = first;
+
+    while(p != NULL)
+    {
+        // Om persnrdatan i en node matchar searchItem
+        if(p->data.getPersNr() == searchItem)
+            // Returnera en pekare till noden
+            return p;
+
+        p = p->next;
+    }
+
+    return p;
+}
+
+// Skriver ut en node som en pekare pekar på
+void QList::printNode(Node *p)
+{
+    cout << "Namn: " << p->data.getName().getFirstName() << " " << p->data.getName().getLastName() << endl;
+    cout << "Gatuadress: " << p->data.getAddress().getStreet() << endl;
+    cout << "Postadress: " << p->data.getAddress().getPostalNo() << " " << p->data.getAddress().getCity() << endl;
+    cout << "Personnr: " << p->data.getPersNr() << endl;
+    cout << "Skostorlek: " << p->data.getSkoNr() << endl;
+}
+
+// Hjälpfunktion för att hitta index för en viss person
+int QList::indexOf(const string &persnr) const
+{
+    Node *temp = first;
+    int idx = 1;
+
+    while(temp != NULL)
+    {
+        if(temp->data.getPersNr() == persnr)
+            return idx;
+        idx++;
+        temp = temp->next;
+    }
+
+    return -1;
+}
