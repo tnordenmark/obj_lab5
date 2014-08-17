@@ -27,12 +27,12 @@ class QList
 {
     private:
         Node *first, *last;
+        Node *searchNode(std::string searchItem) const;
     public:
         QList() : first(0), last(0) {}
         ~QList();
-        Node *searchNode(std::string searchItem) const;
         void enque(Item item);
-        bool deque();
+        bool deque(Item &item);
         bool del(Item item);
         bool isEmpty() const;
         QIterator begin() const {return QIterator(first);}

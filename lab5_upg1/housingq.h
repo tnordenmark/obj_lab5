@@ -12,14 +12,15 @@ class HousingQ
 
         void showMenu();
         int menuChoice();
-        void addPersonToQue(QList &q);
-        void offerHousing(QList &q);
-        void printHousingQue(QList &q);
-        int indexOf(const std::string &persnr, QList &q) const;
-        int sizeOfQue(QList &q);
-        void printPerson(QList &q);
-        void delPerson(QList &q);
-        void saveToFile(QList &q);
+        void addPersonToQue();
+        void offerHousing();
+        void printHousingQue();
+        int indexOf(const std::string &persnr) const;
+        int sizeOfQue();
+        void printPerson();
+        void delPerson();
+        void saveToFile();
+        void readFromFile();
     public:
         HousingQ();
         int run();

@@ -1,26 +1,62 @@
-Först måste jag säga att jag hade förträngt att jag hade en lab kvar i kursen. Dock har
-jag fått ordning på programmet vad jag kan se. Har skrivit om housingq.cpp och flyttat
-alla funktioner med output från queue.cpp till housingq.cpp. Programmet segfaultar inte
-längre om man försöker ta bort en användare som inte finns eller användare på specifika
-platser i kön (först, sist etc).
+Hej,
 
-Har även skrivit nya funktioner för indexOf() och sizeOfQue() i housingq.cpp den här
-gången, samt städat upp koden och tagit bort en del andra funktioner. Loopar använder nu
-QIterator för att iterera över listan och alla 0/NULL är ersatta med nullptr.
+Börjar ju bli smått pinsamt det här. Pekardjungeln är inte helt lätt att hugga sig igenom innan den
+berömda polletten trillat ned. Det känns dock som det går lite lättare nu när man haft en stund på
+sig att smälta intrycken under sommaren. Nu tror jag att allt ska vara grönt. I alla fall de punkter
+du behandlat i din feedback.
 
-Dock har jag en reservation. Är inte helt säker på vad som menas angående att data ska 
-returneras som en referensparameter i beskrivningen av deque-funktionen nedan. Ej heller
-hur den ska skrivas. Är det meningen att man ska använda templates eller överlagring av
-funktioner för att kunna returnera olika datatyper?
+============================
+void HousingQ::printPerson()
+============================
+Ersatt anropet till wrappern searchFor() ned loopen nedan som istället itererar över listan och
+sätter qi till rätt nod vid träff på personnummer. Sen skriver jag ut informationen om personen
+direkt med qi här eftersom ingenting raderars, utan bara eftersökts. Antar att det är så du menar?
 
-Namn: deque
-Uppgift: Tar bort en nod i början av listan. Data för den person som ligger i noden
-returneras via en referensdeklarerad parameter. Vidare returneras false om listan är tom
-annars true
-Indata: -
-Utdata: false om listan är tom annars true. Item &item, data för den person som tas bort
-från listan.
+for(qi = que.begin(); qi != que.end(); qi++)
+{
+    if((*qi).getPersNr() == persnr)
+    {
+        // Avbryt loopen om qi står på rätt nod
+        break;
+    }
+}
 
-I övrigt verkar programmet fungera som det ska utan buggar.
+=============================
+void HousingQ::offerHousing()
+=============================
+Märkligt det där med att du får ett fel när du erbjuder en person bostad. Under Linux med gcc 4.9.1
+fungerar det utmärkt för min del. Därför har jag inte upptäckt felet. Har dock genomfört ändringarna
+enligt din feedback.
 
+QIterator qi = que.begin();
+Raderad då den ju inte behövs eftersom det är item som används.
+
+cout << (*qi).getName().getFirstName() << " " << (*qi).getName().getLastName() << " - ";
+cout << (*qi).getPersNr() << endl << endl;
+Ändrad till att använda item för att skriva ut information om raderad person.
+
+==========================
+void HousingQ::delPerson()
+==========================
+Har ändrat så att eftersökt person sparas i item, och använder sen item för att skriva ut
+informationen om personen efter att noden raderats.
+
+for(qi = que.begin(); qi != que.end(); qi++)
+{
+    if((*qi).getPersNr() == persnr)
+    {
+        // Lagra eftersökt person i item
+        item = *qi;
+        // Avbryt loopen om qi står på rätt nod
+        break;
+    }
+}
+
+==========================================
+*QList::searchFor(string searchItem) const
+==========================================
+Helt raderad från programmet.
+
+---
+Hälsningar
 Thomas Nordenmark

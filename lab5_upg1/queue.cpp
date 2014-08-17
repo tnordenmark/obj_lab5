@@ -83,12 +83,13 @@ void QList::enque(Item item)
 }
 
 // Radera första noden i kön
-bool QList::deque()
+bool QList::deque(Item &item)
 {
     if(isEmpty())
         return false;
 
     Node *n = first;
+    item = n->data;
     first = first->next;
 
     if(isEmpty())
@@ -107,7 +108,7 @@ bool QList::del(Item item)
         return false;
 
     // Skapa noder som behövs
-    Node *curr, *prev, *temp;
+    Node *curr, *prev;
 
     // Sätt föregående och aktuell nod till first (huvudet)
     prev = curr = first;
@@ -129,17 +130,17 @@ bool QList::del(Item item)
     }
     else
     {
-        // Sätt föregåendes nästa nod till aktuell nods mästa nod
+        // Sätt föregåendes nästa nod till aktuell nods nästa nod
         prev->next = curr->next;
 
         // Om aktuell nods nästa är NULL, dvs. aktuell nod = sista nod
         if(curr->next == nullptr)
-            temp = prev;
+            last = prev;
     }
 
     delete curr;
 
-    return false;
+    return true;
 }
 
 // Är listan tom? Dvs. är första noden NULL?
